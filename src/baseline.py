@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 
+from .privacy import measure_baseline_exposure
 from .qwen_client import QwenClient, MODEL_STANDARD
 from .scorer import SystemResult
 from .tasks import Task
@@ -119,6 +120,11 @@ def run_baseline(
     disagreement = 1.0 - float(confidence) if isinstance(confidence, (int, float)) else 0.0
     disagreement = max(0.0, min(1.0, disagreement))
 
+    # Exposure is structural here: _render_task() pooled both confidential
+    # briefs into one prompt, so every secret crossed the principal boundary
+    # before the model was even called.
+    exposure = measure_baseline_exposure(task)
+
     return SystemResult(
         task_id=task.task_id,
         system="baseline",
@@ -128,4 +134,7 @@ def run_baseline(
         rounds=1,
         escalation_question=parsed.get("question_for_human") if escalated else None,
         transcript=[{"role": "solo_analyst", "content": raw}],
+        exposed_secrets=exposure.exposed_secrets,
+        total_secrets=exposure.total_secrets,
+        exposure_by_construction=True,
     )

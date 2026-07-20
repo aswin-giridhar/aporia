@@ -39,6 +39,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 
+from .privacy import cheapest_unblocking_request, measure_society_exposure
 from .qwen_client import QwenClient, MODEL_STANDARD
 from .scorer import SystemResult
 from .tasks import Task
@@ -314,12 +315,21 @@ def run_society(
         price = (last.buyer_offer + last.seller_offer) // 2
 
     # A society that escalates without saying what it needs has only deferred
-    # the problem. Always carry a concrete question.
+    # the problem. The request names the single blocking fact and explicitly
+    # disclaims what it does NOT need — that disclaimer is what makes the
+    # question safe for a human to answer.
     question = auditor.get("question_for_human") if escalate else None
     if escalate and not question:
-        question = ("The parties could not reconcile their positions. Confirm "
-                    "whether either side's stated limits are negotiable, or "
-                    "supply the term that was left unspecified.")
+        question = cheapest_unblocking_request(task, disagreement)
+
+    # Measure what actually crossed the principal boundary. Only the published
+    # transcript is scanned: private briefs never entered it, so anything found
+    # here was genuinely emitted by an agent.
+    published = "\n".join(
+        f"{t.get('offer')} {t.get('rationale', '')} {t.get('missing_information') or ''}"
+        for t in public_transcript
+    )
+    exposure = measure_society_exposure(task, published)
 
     return SystemResult(
         task_id=task.task_id,
@@ -330,4 +340,7 @@ def run_society(
         rounds=rounds_used,
         escalation_question=question,
         transcript=full_transcript,
+        exposed_secrets=exposure.exposed_secrets,
+        total_secrets=exposure.total_secrets,
+        exposure_by_construction=False,
     )
