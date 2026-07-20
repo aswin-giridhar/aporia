@@ -1,0 +1,333 @@
+{
+  "meta": {
+    "run_id": "20260720T195733Z",
+    "timestamp_utc": "2026-07-20T19:57:33+00:00",
+    "mode": "live",
+    "model": "qwen3.7-plus",
+    "provider": "openrouter",
+    "seed": 20260720,
+    "n_per_class": 2,
+    "n_tasks": 6,
+    "token_budget": 400000,
+    "task_counts": {
+      "contradictory": 2,
+      "solvable": 2,
+      "underspecified": 2
+    },
+    "endpoint": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "python": "3.13.5",
+    "partial_run": false,
+    "systems_not_reached": [],
+    "n_failures": 0,
+    "n_model_calls": 30
+  },
+  "results": [
+    {
+      "task_id": "contradictory-00",
+      "system": "baseline",
+      "escalated": true,
+      "price": null,
+      "disagreement": 0.0,
+      "rounds": 1,
+      "escalation_question": null,
+      "transcript": [
+        {
+          "role": "solo_analyst",
+          "content": "{\n  \"escalate\": true,\n  \"price\": null,\n  \"confidence\": 1.0,\n  \"reason\": \"The buyer's maximum price of 98,000 is below the seller's minimum acceptable price of 113,000, so there is no overlapping range for agreement.\",\n  \"question_for_human\": null\n}"
+        }
+      ],
+      "exposed_secrets": 4,
+      "total_secrets": 4,
+      "exposure_by_construction": true
+    },
+    {
+      "task_id": "solvable-00",
+      "system": "baseline",
+      "escalated": false,
+      "price": 60500,
+      "disagreement": 0.050000000000000044,
+      "rounds": 1,
+      "escalation_question": null,
+      "transcript": [
+        {
+          "role": "solo_analyst",
+          "content": "{\n  \"escalate\": false,\n  \"price\": 60500,\n  \"confidence\": 0.95,\n  \"reason\": \"The buyer's maximum price and the seller's minimum price overlap, allowing for a mutually acceptable agreement at the midpoint.\",\n  \"question_for_human\": null\n}"
+        }
+      ],
+      "exposed_secrets": 4,
+      "total_secrets": 4,
+      "exposure_by_construction": true
+    },
+    {
+      "task_id": "contradictory-01",
+      "system": "baseline",
+      "escalated": true,
+      "price": null,
+      "disagreement": 0.010000000000000009,
+      "rounds": 1,
+      "escalation_question": "The buyer's maximum (115,000) and seller's minimum (138,000) do not overlap. Is there additional context, flexibility, or alternative terms that could bridge this 23,000 gap?",
+      "transcript": [
+        {
+          "role": "solo_analyst",
+          "content": "{\n  \"escalate\": true,\n  \"price\": null,\n  \"confidence\": 0.99,\n  \"reason\": \"The buyer's maximum price of 115,000 is below the seller's minimum acceptable price of 138,000, leaving no overlapping range for agreement.\",\n  \"question_for_human\": \"The buyer's maximum (115,000) and seller's minimum (138,000) do not overlap. Is there additional context, flexibility, or alternative terms that could bridge this 23,000 gap?\"\n}"
+        }
+      ],
+      "exposed_secrets": 4,
+      "total_secrets": 4,
+      "exposure_by_construction": true
+    },
+    {
+      "task_id": "underspecified-01",
+      "system": "baseline",
+      "escalated": true,
+      "price": null,
+      "disagreement": 0.0,
+      "rounds": 1,
+      "escalation_question": null,
+      "transcript": [
+        {
+          "role": "solo_analyst",
+          "content": "{\n  \"escalate\": true,\n  \"price\": null,\n  \"confidence\": 1.0,\n  \"reason\": \"The required delivery deadline was never specified, which is a term required to evaluate the deal.\",\n  \"question_for_human\": null\n}"
+        }
+      ],
+      "exposed_secrets": 4,
+      "total_secrets": 4,
+      "exposure_by_construction": true
+    },
+    {
+      "task_id": "underspecified-00",
+      "system": "baseline",
+      "escalated": true,
+      "price": null,
+      "disagreement": 0.0,
+      "rounds": 1,
+      "escalation_question": "What is the required regulatory certification for the data-centre UPS retrofit?",
+      "transcript": [
+        {
+          "role": "solo_analyst",
+          "content": "{\n  \"escalate\": true,\n  \"price\": null,\n  \"confidence\": 1.0,\n  \"reason\": \"The required regulatory certification was never specified, which is a critical term required to evaluate the deal.\",\n  \"question_for_human\": \"What is the required regulatory certification for the data-centre UPS retrofit?\"\n}"
+        }
+      ],
+      "exposed_secrets": 4,
+      "total_secrets": 4,
+      "exposure_by_construction": true
+    },
+    {
+      "task_id": "solvable-01",
+      "system": "baseline",
+      "escalated": false,
+      "price": 108000,
+      "disagreement": 0.050000000000000044,
+      "rounds": 1,
+      "escalation_question": null,
+      "transcript": [
+        {
+          "role": "solo_analyst",
+          "content": "{\n  \"escalate\": false,\n  \"price\": 108000,\n  \"confidence\": 0.95,\n  \"reason\": \"The buyer's maximum and seller's minimum acceptable prices overlap, allowing for a fair agreement at the midpoint.\",\n  \"question_for_human\": null\n}"
+        }
+      ],
+      "exposed_secrets": 4,
+      "total_secrets": 4,
+      "exposure_by_construction": true
+    },
+    {
+      "task_id": "contradictory-00",
+      "system": "society",
+      "escalated": true,
+      "price": null,
+      "disagreement": 0.85,
+      "rounds": 2,
+      "escalation_question": "What is the expected contract duration and annual volume for this cold-chain logistics partnership?",
+      "transcript": [
+        {
+          "role": "buyer_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 72000,\n  \"rationale\": \"We are seeking a cost-effective cold-chain logistics partner and have based this initial offer on current market rates for standard distribution volumes.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"contract duration and expected annual volume\",\n  \"confidence\": 0.85\n}"
+        },
+        {
+          "role": "seller_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 135000,\n  \"rationale\": \"Our proposed price reflects the specialized infrastructure, energy costs, and stringent temperature control required for reliable cold-chain logistics.\",\n  \"deal_possible\": true,\n  \"missing_information\": null,\n  \"confidence\": 0.85\n}"
+        },
+        {
+          "role": "buyer_agent",
+          "round": 2,
+          "content": "{\n  \"offer\": 85000,\n  \"rationale\": \"We acknowledge the specialized costs of cold-chain logistics, but we must propose a counter-offer that better aligns with our budget constraints for this partnership.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"contract duration and expected annual volume\",\n  \"confidence\": 0.45\n}"
+        },
+        {
+          "role": "seller_agent",
+          "round": 2,
+          "content": "{\n  \"offer\": 125000,\n  \"rationale\": \"We have adjusted our price to 125,000 to demonstrate flexibility, but we still require the contract duration and expected annual volume to properly evaluate the feasibility of your target.\",\n  \"deal_possible\": false,\n  \"missing_information\": \"contract duration and expected annual volume\",\n  \"confidence\": 0.2\n}"
+        },
+        {
+          "role": "auditor",
+          "content": "{\n  \"assessment\": \"underspecified\",\n  \"should_escalate\": true,\n  \"question_for_human\": \"What is the expected contract duration and annual volume for this cold-chain logistics partnership?\",\n  \"confidence\": 0.95\n}"
+        }
+      ],
+      "exposed_secrets": 0,
+      "total_secrets": 4,
+      "exposure_by_construction": false
+    },
+    {
+      "task_id": "solvable-00",
+      "system": "society",
+      "escalated": true,
+      "price": null,
+      "disagreement": 0.85,
+      "rounds": 2,
+      "escalation_question": "What contract duration (e.g., 1, 2, or 3 years) should be proposed or is acceptable for this 500-seat fleet telematics agreement?",
+      "transcript": [
+        {
+          "role": "buyer_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 50000,\n  \"rationale\": \"We are seeking a competitive rate for our 500 drivers that aligns with our current annual fleet management budget.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"contract duration\",\n  \"confidence\": 0.6\n}"
+        },
+        {
+          "role": "seller_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 67500,\n  \"rationale\": \"Our fleet telematics solution provides comprehensive real-time tracking, driver behaviour analytics, and compliance reporting across all 500 seats, delivering significant operational cost savings and safety improvements.\",\n  \"deal_possible\": true,\n  \"missing_information\": null,\n  \"confidence\": 0.65\n}"
+        },
+        {
+          "role": "buyer_agent",
+          "round": 2,
+          "content": "{\n  \"offer\": 58000,\n  \"rationale\": \"We appreciate the value of your solution, but we must establish the contract duration before finalizing the price, and we propose 58,000 to better align with our budget.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"contract duration\",\n  \"confidence\": 0.85\n}"
+        },
+        {
+          "role": "seller_agent",
+          "round": 2,
+          "content": "{\n  \"offer\": 58000,\n  \"rationale\": \"We are willing to work towards a competitive rate, but we need to clarify the contract duration to accurately assess the pricing for the 500 seats.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"contract duration\",\n  \"confidence\": 0.8\n}"
+        },
+        {
+          "role": "auditor",
+          "content": "```json\n{\n  \"assessment\": \"underspecified\",\n  \"should_escalate\": true,\n  \"question_for_human\": \"What contract duration (e.g., 1, 2, or 3 years) should be proposed or is acceptable for this 500-seat fleet telematics agreement?\",\n  \"confidence\": 0.88\n}\n```"
+        }
+      ],
+      "exposed_secrets": 0,
+      "total_secrets": 4,
+      "exposure_by_construction": false
+    },
+    {
+      "task_id": "contradictory-01",
+      "system": "society",
+      "escalated": true,
+      "price": null,
+      "disagreement": 0.85,
+      "rounds": 2,
+      "escalation_question": "What is the required or acceptable contract duration for this cold-chain logistics agreement?",
+      "transcript": [
+        {
+          "role": "buyer_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 90000,\n  \"rationale\": \"We are seeking a competitive rate for our cold-chain logistics requirements that reflects current market conditions and ensures a sustainable partnership.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"contract duration\",\n  \"confidence\": 0.8\n}"
+        },
+        {
+          "role": "seller_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 165000,\n  \"rationale\": \"This opening offer reflects the premium costs associated with maintaining strict temperature controls, specialized equipment, and reliable service required for a comprehensive cold-chain logistics contract.\",\n  \"deal_possible\": true,\n  \"missing_information\": null,\n  \"confidence\": 0.8\n}"
+        },
+        {
+          "role": "buyer_agent",
+          "round": 2,
+          "content": "{\n  \"offer\": 105000,\n  \"rationale\": \"We have increased our offer to reflect the specialized requirements of cold-chain logistics, pending agreement on the contract duration.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"contract duration\",\n  \"confidence\": 0.6\n}"
+        },
+        {
+          "role": "seller_agent",
+          "round": 2,
+          "content": "{\n  \"offer\": 150000,\n  \"rationale\": \"I have adjusted our offer to 150,000 to help bridge the gap, but we must establish the contract duration to properly evaluate the overall deal.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"contract duration\",\n  \"confidence\": 0.65\n}"
+        },
+        {
+          "role": "auditor",
+          "content": "{\n  \"assessment\": \"underspecified\",\n  \"should_escalate\": true,\n  \"question_for_human\": \"What is the required or acceptable contract duration for this cold-chain logistics agreement?\",\n  \"confidence\": 0.95\n}"
+        }
+      ],
+      "exposed_secrets": 0,
+      "total_secrets": 4,
+      "exposure_by_construction": false
+    },
+    {
+      "task_id": "underspecified-01",
+      "system": "society",
+      "escalated": true,
+      "price": null,
+      "disagreement": 0.85,
+      "rounds": 1,
+      "escalation_question": "What is the required delivery deadline for the 500 seats?",
+      "transcript": [
+        {
+          "role": "buyer_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 42000,\n  \"rationale\": \"As a buyer of 500 seats, we expect a volume-discounted rate that reflects current market conditions for fleet telematics solutions.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"delivery deadline\",\n  \"confidence\": 0.8\n}"
+        },
+        {
+          "role": "seller_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 55000,\n  \"rationale\": \"Our opening price reflects the comprehensive value, support, and scalability of providing 500 seats of our premium fleet telematics solution.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"delivery deadline\",\n  \"confidence\": 0.85\n}"
+        },
+        {
+          "role": "auditor",
+          "content": "{\n  \"assessment\": \"underspecified\",\n  \"should_escalate\": true,\n  \"question_for_human\": \"What is the required delivery deadline for the 500 seats?\",\n  \"confidence\": 0.95\n}"
+        }
+      ],
+      "exposed_secrets": 1,
+      "total_secrets": 4,
+      "exposure_by_construction": false
+    },
+    {
+      "task_id": "underspecified-00",
+      "system": "society",
+      "escalated": true,
+      "price": null,
+      "disagreement": 0.85,
+      "rounds": 1,
+      "escalation_question": "What specific regulatory certification is required for the data-centre UPS retrofit that both parties must include in their offers?",
+      "transcript": [
+        {
+          "role": "buyer_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 115000,\n  \"rationale\": \"We are initiating negotiations with a competitive offer that reflects our budgetary constraints for the data-centre UPS retrofit.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"required regulatory certification\",\n  \"confidence\": 0.85\n}"
+        },
+        {
+          "role": "seller_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 155000,\n  \"rationale\": \"This opening offer reflects the comprehensive scope of the data-centre UPS retrofit, ensuring high reliability and seamless integration for your facility.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"required regulatory certification\",\n  \"confidence\": 0.6\n}"
+        },
+        {
+          "role": "auditor",
+          "content": "{\n  \"assessment\": \"underspecified\",\n  \"should_escalate\": true,\n  \"question_for_human\": \"What specific regulatory certification is required for the data-centre UPS retrofit that both parties must include in their offers?\",\n  \"confidence\": 0.95\n}"
+        }
+      ],
+      "exposed_secrets": 0,
+      "total_secrets": 4,
+      "exposure_by_construction": false
+    },
+    {
+      "task_id": "solvable-01",
+      "system": "society",
+      "escalated": true,
+      "price": null,
+      "disagreement": 0.85,
+      "rounds": 1,
+      "escalation_question": "What are the contract duration and expected shipment volume for this agreement?",
+      "transcript": [
+        {
+          "role": "buyer_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 95000,\n  \"rationale\": \"Our opening offer reflects current market rates for cold-chain logistics and our commitment to a mutually beneficial partnership.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"contract duration and volume\",\n  \"confidence\": 0.85\n}"
+        },
+        {
+          "role": "seller_agent",
+          "round": 1,
+          "content": "{\n  \"offer\": 120000,\n  \"rationale\": \"This opening offer reflects the premium infrastructure, specialized equipment, and rigorous compliance standards required to maintain uncompromised cold-chain integrity.\",\n  \"deal_possible\": true,\n  \"missing_information\": \"contract duration and expected shipment volume\",\n  \"confidence\": 0.65\n}"
+        },
+        {
+          "role": "auditor",
+          "content": "{\n  \"assessment\": \"underspecified\",\n  \"should_escalate\": true,\n  \"question_for_human\": \"What are the contract duration and expected shipment volume for this agreement?\",\n  \"confidence\": 0.95\n}"
+        }
+      ],
+      "exposed_secrets": 0,
+      "total_secrets": 4,
+      "exposure_by_construction": false
+    }
+  ],
+  "failures": []
+}

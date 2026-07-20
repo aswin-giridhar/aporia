@@ -284,9 +284,20 @@ def run_society(
     # The auditor can force escalation even below threshold. It is the only
     # participant with no stake in closing a deal, so its judgement that
     # something is missing is treated as decisive rather than advisory.
+    # The auditor's DECISION is `should_escalate`. `assessment` is its label for
+    # the situation, and the two can legitimately disagree: an auditor may note
+    # that a term is loose ("underspecified") while judging the deal still
+    # closeable.
+    #
+    # An earlier revision forced escalation whenever assessment == "underspecified",
+    # which overrode the auditor's own explicit should_escalate=false. Measured
+    # on qwen3.6-flash, that is exactly what escalated solvable-00: disagreement
+    # scored 0.24 (well under the 0.55 threshold) and the auditor said
+    # should_escalate=false with confidence 0.9 — and the system escalated anyway.
+    #
+    # Introducing an independent third opinion and then overruling it whenever it
+    # uses a particular word is not a third opinion.
     auditor_escalates = bool(auditor.get("should_escalate", False))
-    if auditor.get("assessment") == "underspecified":
-        auditor_escalates = True
 
     # UNANIMITY IS CATEGORICAL, NOT WEIGHTED.
     # If every agent independently asserts the deal is impossible, or that a
@@ -295,9 +306,25 @@ def run_society(
     # narrowing price gap. Folding it into the weighted score let unanimous
     # "information is missing" land at 0.30 and silently produce a deal, which
     # is precisely the failure this project exists to prevent.
-    unanimous_block = any(
-        r.impossible_votes >= 1.0 or r.missing_votes >= 1.0 for r in history
+    # ...but only when it PERSISTS. Measured against real models (qwen3.6-flash
+    # via OpenRouter, 2026-07-20), an `any(...)` over all rounds escalated 6/6
+    # tasks — a 100% false-escalation rate, i.e. a useless system.
+    #
+    # The cause is that both parties reject each other's OPENING position almost
+    # every time. That is ordinary negotiation, not deadlock. Treating it as a
+    # categorical impossibility claim confuses "we have not agreed yet" with
+    # "we cannot agree".
+    #
+    # A missing term is different: if a required fact was never specified, that
+    # is true in round 1 and stays true, so it is decisive immediately.
+    final = history[-1] if history else None
+    persistent_impossible = (
+        final is not None
+        and final.impossible_votes >= 1.0
+        and (len(history) >= 2 or rounds_used >= max_rounds)
     )
+    missing_information = any(r.missing_votes >= 1.0 for r in history)
+    unanimous_block = persistent_impossible or missing_information
 
     if unanimous_block:
         # Keep the reported score consistent with the decision. Calibration AUC

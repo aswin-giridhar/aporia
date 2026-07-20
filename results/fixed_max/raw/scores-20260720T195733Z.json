@@ -1,0 +1,198 @@
+{
+  "meta": {
+    "run_id": "20260720T195733Z",
+    "timestamp_utc": "2026-07-20T19:57:33+00:00",
+    "mode": "live",
+    "model": "qwen3.7-max",
+    "provider": "openrouter",
+    "seed": 20260720,
+    "n_per_class": 2,
+    "n_tasks": 6,
+    "token_budget": 400000,
+    "task_counts": {
+      "contradictory": 2,
+      "solvable": 2,
+      "underspecified": 2
+    },
+    "endpoint": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "python": "3.13.5",
+    "partial_run": false,
+    "systems_not_reached": [],
+    "n_failures": 0,
+    "n_model_calls": 34
+  },
+  "scores": {
+    "meta": {
+      "n_tasks": 6,
+      "n_solvable": 2,
+      "n_should_escalate": 4,
+      "n_by_class": {
+        "solvable": 2,
+        "underspecified": 2,
+        "contradictory": 2
+      },
+      "systems": [
+        "baseline",
+        "society"
+      ]
+    },
+    "systems": {
+      "baseline": {
+        "counts": {
+          "n_results": 6,
+          "n_missing_results": 0,
+          "missing_task_ids": [],
+          "n_correct": 6,
+          "n_solvable_ok": 2,
+          "n_escalated_when_should": 4,
+          "n_false_escalations": 0,
+          "n_hallucinated_deals": 0,
+          "mean_rounds": 1.0
+        },
+        "metrics": {
+          "solvable_accuracy": {
+            "value": 1.0,
+            "reason": null,
+            "numerator": 2,
+            "denominator": 2
+          },
+          "escalation_recall": {
+            "value": 1.0,
+            "reason": null,
+            "numerator": 4,
+            "denominator": 4
+          },
+          "false_escalation_rate": {
+            "value": 0.0,
+            "reason": null,
+            "numerator": 0,
+            "denominator": 2
+          },
+          "hallucinated_deal_rate": {
+            "value": 0.0,
+            "reason": null,
+            "numerator": 0,
+            "denominator": 4
+          },
+          "overall_correct": {
+            "value": 1.0,
+            "reason": null,
+            "numerator": 6,
+            "denominator": 6
+          },
+          "cross_principal_exposure": {
+            "value": 1.0,
+            "reason": null,
+            "numerator": 24,
+            "denominator": 24
+          },
+          "calibration_auc": {
+            "value": 0.125,
+            "reason": null,
+            "numerator": 4,
+            "denominator": 2
+          }
+        },
+        "cost": {
+          "calls": 6,
+          "total_tokens": 4438.0,
+          "prompt_tokens": 1791,
+          "completion_tokens": 2647,
+          "est_cost_usd": 0.0,
+          "wall_clock_s": 50.56064995902125,
+          "errors": 0,
+          "cost_per_successful_task": {
+            "value": 0.0,
+            "reason": null,
+            "numerator": null,
+            "denominator": 6
+          },
+          "tokens_per_successful_task": {
+            "value": 739.6666666666666,
+            "reason": null,
+            "numerator": null,
+            "denominator": 6
+          }
+        }
+      },
+      "society": {
+        "counts": {
+          "n_results": 6,
+          "n_missing_results": 0,
+          "missing_task_ids": [],
+          "n_correct": 4,
+          "n_solvable_ok": 0,
+          "n_escalated_when_should": 4,
+          "n_false_escalations": 2,
+          "n_hallucinated_deals": 0,
+          "mean_rounds": 1.6666666666666667
+        },
+        "metrics": {
+          "solvable_accuracy": {
+            "value": 0.0,
+            "reason": null,
+            "numerator": 0,
+            "denominator": 2
+          },
+          "escalation_recall": {
+            "value": 1.0,
+            "reason": null,
+            "numerator": 4,
+            "denominator": 4
+          },
+          "false_escalation_rate": {
+            "value": 1.0,
+            "reason": null,
+            "numerator": 2,
+            "denominator": 2
+          },
+          "hallucinated_deal_rate": {
+            "value": 0.0,
+            "reason": null,
+            "numerator": 0,
+            "denominator": 4
+          },
+          "overall_correct": {
+            "value": 0.6666666666666666,
+            "reason": null,
+            "numerator": 4,
+            "denominator": 6
+          },
+          "cross_principal_exposure": {
+            "value": 0.041666666666666664,
+            "reason": null,
+            "numerator": 1,
+            "denominator": 24
+          },
+          "calibration_auc": {
+            "value": 0.75,
+            "reason": null,
+            "numerator": 4,
+            "denominator": 2
+          }
+        },
+        "cost": {
+          "calls": 28,
+          "total_tokens": 31159.0,
+          "prompt_tokens": 7758,
+          "completion_tokens": 23401,
+          "est_cost_usd": 0.0,
+          "wall_clock_s": 479.9887902630144,
+          "errors": 2,
+          "cost_per_successful_task": {
+            "value": 0.0,
+            "reason": null,
+            "numerator": null,
+            "denominator": 4
+          },
+          "tokens_per_successful_task": {
+            "value": 7789.75,
+            "reason": null,
+            "numerator": null,
+            "denominator": 4
+          }
+        }
+      }
+    }
+  }
+}
