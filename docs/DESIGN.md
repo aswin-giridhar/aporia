@@ -145,16 +145,28 @@ correctly, independent of where we choose to cut.
 - **AUC ≈ 0.5** — disagreement carries no information about solvability. The
   core claim is false, and we report that. A society could still win on
   accuracy while failing here; the two are separate questions.
-- **AUC > 0.5** — disagreement ranks impossible tasks above solvable ones. The
-  society possesses a reliability signal, and the escalation threshold is a
-  tunable operating point on that curve rather than a guess.
+- **AUC > 0.5** — disagreement ranks impossible tasks above solvable ones,
+  *provided the score is not saturated and the sample is large enough to trust*.
 - **AUC ≈ 1.0** on a small task set is a warning sign, not a triumph: with a
   balanced set of a few tasks per class, the estimate is high-variance. The
   task count is reported alongside the AUC for exactly this reason.
 
-**No AUC value is quoted anywhere in this repository until the benchmark has
-been run.** Reporting a calibration number that was never computed would
-invalidate the only thing this project is claiming.
+**What the live run actually produced — and why we do NOT claim it as a win.**
+The society's AUC came out 0.75 / 0.50 / 0.75 across the three models. On
+inspection this is an artifact, not a signal, and we retracted the claim:
+
+1. **Saturation.** The escalation policy floors the disagreement score at 0.85
+   whenever it fires, and it fires on almost every task, so five of six scores
+   are pinned at 0.85. A metric that is partly *set by* the decision it is meant
+   to predict is close to circular.
+2. **Sample size.** n = 6, split 4-vs-2. A single task moves the AUC by 0.25.
+
+So the honest reading of the society's calibration is **inconclusive**, and the
+uncertainty-signal hypothesis is **not demonstrated** by this run. The one
+finding that survives is the baseline's *sub-0.5* AUC (0.06–0.12, consistent
+across three models): a single agent's self-confidence, on this set, did not
+track its correctness. We report the direction, with the n=6 caveat, and no
+more. See README §5.
 
 ### How the baseline is scored on the same axis
 
