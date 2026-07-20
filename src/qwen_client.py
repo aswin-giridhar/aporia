@@ -92,6 +92,52 @@ _PRICE_PER_1K_TOKENS_USD: dict[str, tuple[float, float]] = {
 }
 
 
+# --- Fallback provider ------------------------------------------------------
+# OpenRouter serves the same Qwen models through a different vendor. It exists
+# here for one reason: when DashScope entitlement is unavailable, the choice is
+# between REAL measurements of Qwen model behaviour obtained elsewhere, and
+# hand-written fixtures that measure nothing. The former is strictly more
+# informative about the research question.
+#
+# It is NOT a substitute for Alibaba Cloud, and every result carries the
+# provider that produced it (see Ledger/CallRecord.provider) so that no table
+# can silently imply DashScope usage. That labelling is enforced in the data,
+# not left to prose.
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+
+# UNVERIFIED: OpenRouter model ids are not confirmed against their live
+# catalogue in this environment. `list_openrouter_qwen_models()` queries the
+# public endpoint so the id can be checked rather than assumed — do that before
+# relying on any name here.
+OPENROUTER_MODEL_MAP = {
+    MODEL_FLAGSHIP: "qwen/qwen3-max",
+    MODEL_STANDARD: "qwen/qwen3-235b-a22b",
+    MODEL_CHEAP: "qwen/qwen3-30b-a3b",
+}
+
+
+def list_openrouter_qwen_models() -> list[str]:
+    """Query OpenRouter's public catalogue for Qwen model ids.
+
+    Public endpoint, no key required. Used to verify a model id exists before
+    a run rather than discovering it mid-benchmark.
+    """
+    import json as _json
+    import urllib.request
+
+    with urllib.request.urlopen(f"{OPENROUTER_BASE_URL}/models", timeout=30) as fh:
+        data = _json.load(fh)["data"]
+    return sorted(m["id"] for m in data if "qwen" in m["id"].lower())
+
+
+def resolve_model(model: str, provider: str) -> str:
+    """Translate a DashScope model id to the provider's naming."""
+    if provider == "openrouter":
+        return OPENROUTER_MODEL_MAP.get(model, model)
+    return model
+
+
+
 @dataclass
 class CallRecord:
     """One model call. The unit of measurement for the whole benchmark."""
@@ -106,6 +152,9 @@ class CallRecord:
     latency_s: float
     ok: bool
     error: str | None = None
+    # Which vendor actually served this call. Carried per-call so a results
+    # table can never imply Alibaba Cloud usage that did not happen.
+    provider: str = "dashscope"
 
     @property
     def total_tokens(self) -> int:
@@ -174,6 +223,7 @@ class QwenClient:
         max_tokens_budget: int | None = None,
         mock_handler: Callable[[str, list[dict]], str] | None = None,
         plan: str | None = None,
+        provider: str | None = None,
     ) -> None:
         self.mode = mode or os.environ.get("QWEN_MODE", "live")
         self.ledger = ledger
@@ -181,17 +231,29 @@ class QwenClient:
         self._mock_handler = mock_handler
         self._client = None
         self.base_url: str | None = None
+        self.provider = provider or os.environ.get("QWEN_PROVIDER", "dashscope")
 
         if self.mode == "live":
-            key = api_key or os.environ.get("DASHSCOPE_API_KEY")
-            if not key:
-                raise RuntimeError(
-                    "DASHSCOPE_API_KEY is unset. Either export it, or run with "
-                    "QWEN_MODE=mock to exercise orchestration without the API."
-                )
+            if self.provider == "openrouter":
+                key = api_key or os.environ.get("OPENROUTER_API_KEY")
+                if not key:
+                    raise RuntimeError(
+                        "OPENROUTER_API_KEY is unset but provider=openrouter was "
+                        "requested. Set it, or use the default dashscope provider."
+                    )
+                self.base_url = OPENROUTER_BASE_URL
+            else:
+                key = api_key or os.environ.get("DASHSCOPE_API_KEY")
+                if not key:
+                    raise RuntimeError(
+                        "DASHSCOPE_API_KEY is unset. Either export it, run with "
+                        "QWEN_MODE=mock to exercise orchestration without any API, "
+                        "or set QWEN_PROVIDER=openrouter with OPENROUTER_API_KEY."
+                    )
+                self.base_url = resolve_base_url(key, plan or os.environ.get("QWEN_PLAN"))
+
             if OpenAI is None:
                 raise RuntimeError("pip install openai — required for live mode.")
-            self.base_url = resolve_base_url(key, plan or os.environ.get("QWEN_PLAN"))
             self._client = OpenAI(api_key=key, base_url=self.base_url)
 
     # -- budget -----------------------------------------------------------
@@ -231,12 +293,15 @@ class QwenClient:
         if self.mode == "mock":
             return self._mock_chat(messages, run_id, task_id, system, role, model)
 
+        # Model ids differ per vendor; translate once, record what was actually sent.
+        wire_model = resolve_model(model, self.provider)
+
         last_err = "unknown"
         for attempt in range(retries):
             t0 = time.monotonic()
             try:
                 resp = self._client.chat.completions.create(  # type: ignore[union-attr]
-                    model=model,
+                    model=wire_model,
                     messages=messages,
                     temperature=temperature,
                     max_tokens=max_tokens,
@@ -245,7 +310,7 @@ class QwenClient:
                 usage = resp.usage
                 self.ledger.add(CallRecord(
                     run_id=run_id, task_id=task_id, system=system, role=role,
-                    model=model,
+                    model=wire_model, provider=self.provider,
                     prompt_tokens=getattr(usage, "prompt_tokens", 0),
                     completion_tokens=getattr(usage, "completion_tokens", 0),
                     latency_s=dt, ok=True,
@@ -257,7 +322,7 @@ class QwenClient:
                 last_err = f"{type(exc).__name__}: {exc}"
                 self.ledger.add(CallRecord(
                     run_id=run_id, task_id=task_id, system=system, role=role,
-                    model=model, prompt_tokens=0, completion_tokens=0,
+                    model=wire_model, provider=self.provider, prompt_tokens=0, completion_tokens=0,
                     latency_s=dt, ok=False, error=last_err,
                 ))
                 # Entitlement/auth failures will not heal on retry — fail fast.
@@ -284,7 +349,7 @@ class QwenClient:
         approx_in = sum(len(str(m.get("content", ""))) for m in messages) // 4
         self.ledger.add(CallRecord(
             run_id=run_id, task_id=task_id, system=system, role=role,
-            model=model, prompt_tokens=approx_in,
+            model=model, provider=self.provider, prompt_tokens=approx_in,
             completion_tokens=len(content) // 4, latency_s=0.0,
             ok=not degraded, error=note,
         ))

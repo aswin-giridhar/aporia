@@ -359,6 +359,13 @@ def build_parser() -> argparse.ArgumentParser:
                    help="tasks per class (3 classes, so total = 3 * n).")
     p.add_argument("--model", default=qc.MODEL_STANDARD,
                    help="DashScope model id for every agent.")
+    p.add_argument("--provider", choices=("dashscope", "openrouter"),
+                   default=None,
+                   help="Which vendor serves the models. 'dashscope' (default) "
+                        "is Alibaba Cloud and the intended path. 'openrouter' "
+                        "is a labelled fallback used only when DashScope "
+                        "entitlement is unavailable; results are tagged with "
+                        "the provider that produced them.")
     p.add_argument("--seed", type=int, default=20260720,
                    help="task generation seed; the same seed reproduces the "
                         "same task set, which is what makes results auditable.")
@@ -394,6 +401,7 @@ def main(argv: list[str] | None = None) -> int:
         "timestamp_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "mode": args.mode,
         "model": args.model,
+        "provider": args.provider or "dashscope",
         "seed": args.seed,
         "n_per_class": args.n_per_class,
         "n_tasks": len(tasks),
@@ -434,7 +442,8 @@ def main(argv: list[str] | None = None) -> int:
             handler = mock_handler
         client = QwenClient(ledger=ledger, mode=args.mode,
                             max_tokens_budget=args.budget,
-                            mock_handler=handler)
+                            mock_handler=handler,
+                            provider=args.provider)
     except RuntimeError as exc:
         raise SystemExit(f"Could not construct QwenClient: {exc}") from exc
 
