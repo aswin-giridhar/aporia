@@ -1,0 +1,23 @@
+# Secrets — NEVER commit
+.env
+.env.*
+!.env.example
+*.key
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Run artifacts (keep committed results/*.md summaries, drop raw ledgers)
+results/raw/
+*.log
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
