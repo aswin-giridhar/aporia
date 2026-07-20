@@ -158,10 +158,11 @@ invalidate the only thing this project is claiming.
 
 ### How the baseline is scored on the same axis
 
-The baseline has no dissent to measure, so it cannot produce a disagreement
-score. Excluding it from the calibration comparison would be convenient and
-unfair, so instead we give it **the strongest signal a single agent can
-actually have**: its own self-reported confidence, inverted to a
+The baseline has no *inter-agent* dissent to measure — there is only one agent —
+so it cannot produce a disagreement score of the kind the society computes. It
+can, however, express uncertainty, and excluding it from the calibration
+comparison would be convenient and unfair. So we give it **the strongest signal
+a single agent can actually have**: its own self-reported confidence, inverted to a
 disagreement-shaped score (`1 - confidence`, clamped to `[0, 1]`) in
 `src/baseline.py`. Both systems then feed the identical AUC computation.
 
