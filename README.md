@@ -148,8 +148,8 @@ The integration is not theoretical. This project issued live requests to
 `dashscope-intl.aliyuncs.com` from `src/qwen_client.py`, and Qwen Cloud's own
 console recorded them:
 
-![Alibaba Cloud usage analytics](docs/alibaba-usage-analytics.png)
-![Per-model request breakdown](docs/alibaba-usage-models.png)
+![Alibaba Cloud usage analytics](docs/alibaba-usage-analytics.jpg)
+![Per-model request breakdown](docs/alibaba-usage-models.jpg)
 
 Requests are logged against `qwen3.7-plus`, `qwen3.7-max`, `qwen3.6-flash`,
 `qwen-flash`, `qwen2-7b-instruct` and `text-embedding-v4` — the models this
