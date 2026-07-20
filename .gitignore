@@ -14,10 +14,13 @@ venv/
 .pytest_cache/
 
 # Run artifacts (keep committed results/*.md summaries, drop raw ledgers)
-results/raw/
 *.log
 
 # OS/editor
 .DS_Store
 .idea/
 .vscode/
+
+# keep only the referenced Alibaba proof ledger, ignore the rest of raw/
+results/raw/*
+!results/raw/alibaba_integration_probe.json
