@@ -118,6 +118,52 @@ Metrics, all exact:
 
 ## 5. Results
 
+### Status: no live results — account never received model entitlement
+
+This project is **complete and runnable**, but at submission time it had not
+produced live measurements, because the Alibaba Cloud account it was built
+against was never provisioned with model access. We state this plainly rather
+than substitute simulated numbers.
+
+What was verified, so the cause is not ambiguous:
+
+| Check | Result |
+|---|---|
+| `GET /models` with a pay-as-you-go key on `dashscope-intl` | **200** — full catalogue returned, key authenticates |
+| `POST /chat/completions`, every model | **403 `AccessDenied.Unpurchased`** |
+| **Qwen Cloud web playground**, same account, no API key involved | **403, identical error** |
+| Payment method attached, billing balance | valid; $0.00 due, nothing overdue |
+| Console → Benefits → free quota | stuck at *"Setting up your free quota, almost ready…"*, never resolves |
+| Console → API Keys → Supported Models | **"No supported models"** — despite an active plan and three active keys |
+
+The playground failing with the identical error is the decisive evidence: it
+uses a browser session rather than an API key, so the fault lies at the
+**account entitlement layer**, not in this codebase, the credentials, or the
+endpoint selection. Several other hackathon participants reported the same
+`AccessDenied.Unpurchased` state on 17–20 July 2026.
+
+**Everything except the numbers is finished.** The moment an entitled key
+exists, one command produces the full table:
+
+```bash
+export DASHSCOPE_API_KEY=<pay-as-you-go key>
+python -m src.benchmark --mode live --n 3 --budget 200000   # ~24 calls
+```
+
+To confirm the pipeline is genuinely complete rather than merely claimed, run
+it with no credentials at all — every stage executes end to end:
+
+```bash
+python -m src.benchmark --mode mock --n 3
+```
+
+That output is deliberately **not** presented as findings. It prints a
+`FIXTURE DATA — NOT EVIDENCE` banner in both the console and the saved results
+file, because the agent behaviour it reports was hand-written by us. A fixture
+that appears to confirm this project's hypothesis is confirming its authors'
+assumptions, and we would rather submit with an honest gap than a flattering
+number.
+
 <!-- RESULTS_TABLE -->
 
 > **Pending live benchmark run.** `src/benchmark.py` writes the results table
