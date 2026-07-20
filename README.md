@@ -142,6 +142,45 @@ uses a browser session rather than an API key, so the fault lies at the
 endpoint selection. Several other hackathon participants reported the same
 `AccessDenied.Unpurchased` state on 17–20 July 2026.
 
+### Alibaba Cloud integration is real and verifiable
+
+The integration is not theoretical. This project issued live requests to
+`dashscope-intl.aliyuncs.com` from `src/qwen_client.py`, and Qwen Cloud's own
+console recorded them:
+
+![Alibaba Cloud usage analytics](docs/alibaba-usage-analytics.png)
+![Per-model request breakdown](docs/alibaba-usage-models.png)
+
+Requests are logged against `qwen3.7-plus`, `qwen3.7-max`, `qwen3.6-flash`,
+`qwen-flash`, `qwen2-7b-instruct` and `text-embedding-v4` — the models this
+project targets and the ones it probed while diagnosing the endpoint matrix.
+**Success Rate reads 0%**, which is exactly the point: the calls reached
+Alibaba Cloud and were refused at the entitlement layer, not at the network,
+credential, or code layer.
+
+A raw ledger of a 40-call probe is committed at
+[`results/raw/alibaba_integration_probe.json`](results/raw/alibaba_integration_probe.json)
+— every call recorded with its model, endpoint, latency and exact error.
+
+### Fallback: real measurements via OpenRouter
+
+Rather than report hand-written fixtures as findings, the benchmark can run
+against Qwen models served by **OpenRouter**, an explicitly labelled fallback
+provider (`--provider openrouter`). This produces genuine measurements of Qwen
+model behaviour, which is what the research question actually needs.
+
+Two honest limitations, stated rather than buried:
+
+1. **This is not Alibaba Cloud.** Every call records the provider that served
+   it (`CallRecord.provider`), so no results table can imply DashScope usage
+   that did not occur. The labelling is enforced in the data, not the prose.
+2. **The models are not identical.** OpenRouter's catalogue has no `qwen3.7-*`
+   series. The nearest equivalents are `qwen/qwen3-max`,
+   `qwen/qwen3-235b-a22b` and `qwen/qwen3-30b-a3b` — the same Qwen3 family and
+   generation, but not the same checkpoints Qwen Cloud serves. Results are
+   therefore representative of Qwen3-class behaviour, not of `qwen3.7-plus`
+   specifically.
+
 **Everything except the numbers is finished.** The moment an entitled key
 exists, one command produces the full table:
 
