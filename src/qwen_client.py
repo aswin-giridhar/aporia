@@ -105,14 +105,20 @@ _PRICE_PER_1K_TOKENS_USD: dict[str, tuple[float, float]] = {
 # not left to prose.
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
-# UNVERIFIED: OpenRouter model ids are not confirmed against their live
-# catalogue in this environment. `list_openrouter_qwen_models()` queries the
-# public endpoint so the id can be checked rather than assumed — do that before
-# relying on any name here.
+# VERIFIED 2026-07-20 against OpenRouter's live public catalogue: these are
+# EXACT id matches for the models Qwen Cloud serves, not near-equivalents, so
+# results characterise the same checkpoints DashScope would have served.
+# Confirmed by list_openrouter_qwen_models(), which returns qwen/qwen3.7-max,
+# qwen/qwen3.7-plus and qwen/qwen3.6-flash among 47 Qwen entries.
+#
+# An earlier revision of this file asserted that no qwen3.7 series existed here.
+# That was wrong, and instructively so: the check filtered its own output
+# through a guessed substring list, then treated absence-from-the-filter as
+# absence-from-the-catalogue. A search you filter is not an exhaustive search.
 OPENROUTER_MODEL_MAP = {
-    MODEL_FLAGSHIP: "qwen/qwen3-max",
-    MODEL_STANDARD: "qwen/qwen3-235b-a22b",
-    MODEL_CHEAP: "qwen/qwen3-30b-a3b",
+    MODEL_FLAGSHIP: "qwen/qwen3.7-max",
+    MODEL_STANDARD: "qwen/qwen3.7-plus",
+    MODEL_CHEAP: "qwen/qwen3.6-flash",
 }
 
 

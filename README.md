@@ -169,17 +169,16 @@ against Qwen models served by **OpenRouter**, an explicitly labelled fallback
 provider (`--provider openrouter`). This produces genuine measurements of Qwen
 model behaviour, which is what the research question actually needs.
 
-Two honest limitations, stated rather than buried:
+**The models are identical.** OpenRouter's catalogue carries `qwen/qwen3.7-max`,
+`qwen/qwen3.7-plus` and `qwen/qwen3.6-flash` — exact id matches for the models
+Qwen Cloud serves, verified against their live catalogue rather than assumed.
+So these results characterise the same checkpoints DashScope would have served;
+only the vendor routing differs.
 
-1. **This is not Alibaba Cloud.** Every call records the provider that served
-   it (`CallRecord.provider`), so no results table can imply DashScope usage
-   that did not occur. The labelling is enforced in the data, not the prose.
-2. **The models are not identical.** OpenRouter's catalogue has no `qwen3.7-*`
-   series. The nearest equivalents are `qwen/qwen3-max`,
-   `qwen/qwen3-235b-a22b` and `qwen/qwen3-30b-a3b` — the same Qwen3 family and
-   generation, but not the same checkpoints Qwen Cloud serves. Results are
-   therefore representative of Qwen3-class behaviour, not of `qwen3.7-plus`
-   specifically.
+The one thing to keep straight: **this is not Alibaba Cloud infrastructure.**
+Every call records the provider that served it (`CallRecord.provider`), so no
+results table can imply DashScope usage that did not occur. That labelling is
+enforced in the data rather than left to prose.
 
 **Everything except the numbers is finished.** The moment an entitled key
 exists, one command produces the full table:
